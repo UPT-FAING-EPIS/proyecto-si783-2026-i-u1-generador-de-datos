@@ -10,7 +10,7 @@
 
 ` `**Proyecto *Generador de datos***
 
-Curso: Diseño y Arquitectura de Software
+Curso: Base de datos II
 
 Docente: 
 
