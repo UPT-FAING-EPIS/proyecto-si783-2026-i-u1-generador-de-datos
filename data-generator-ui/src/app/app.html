@@ -1,0 +1,110 @@
+<div class="container">
+  <h1>🚀 Data Generator Dinámico</h1>
+  <p class="subtitle">Define tu propia estructura de tabla y genera datos personalizados</p>
+
+  <div class="config-section">
+    <h2>Configuración General</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nombre de la tabla</label>
+        <input type="text" [(ngModel)]="tableName" placeholder="ej: clientes, productos, etc.">
+      </div>
+      <div class="form-group">
+        <label>Número de registros</label>
+        <input type="number" [(ngModel)]="recordCount" min="1" max="1000000">
+      </div>
+      <div class="form-group">
+        <label>Formato de salida</label>
+        <select [(ngModel)]="outputFormat">
+          <option value="Sql">SQL (INSERTs)</option>
+          <option value="Json">JSON</option>
+          <option value="Csv">CSV</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Tipo de Base de Datos (para SQL)</label>
+        <select [(ngModel)]="databaseType">
+          <option value="MySQL">MySQL</option>
+          <option value="PostgreSQL">PostgreSQL</option>
+          <option value="MicrosoftSQLServer">SQL Server</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="columns-section">
+    <h2>Definición de Columnas</h2>
+    <button class="btn-add" (click)="addColumn()">+ Agregar Columna</button>
+    
+    <div class="columns-list">
+      <div class="column-card" *ngFor="let col of columns; let i = index">
+        <div class="card-header">
+          <h3>Columna {{ i + 1 }}</h3>
+          <button class="btn-remove" (click)="removeColumn(i)">✖</button>
+        </div>
+        
+        <div class="form-group">
+          <label>Nombre de la columna</label>
+          <input type="text" [(ngModel)]="col.name" placeholder="ej: nombre, email, precio">
+        </div>
+        
+        <div class="form-group">
+          <label>Tipo de dato</label>
+          <select [(ngModel)]="col.type" (change)="onTypeChange(col)">
+            <option value="Integer">Número entero</option>
+            <option value="Decimal">Número decimal</option>
+            <option value="String">Texto</option>
+            <option value="Boolean">Verdadero/Falso</option>
+            <option value="DateTime">Fecha y hora</option>
+            <option value="Date">Fecha</option>
+            <option value="Time">Hora</option>
+            <option value="Email">Correo electrónico</option>
+            <option value="Phone">Teléfono</option>
+            <option value="Url">URL</option>
+            <option value="IPv4">Dirección IPv4</option>
+            <option value="Enum">Selección</option>
+          </select>
+        </div>
+        
+        <!-- Campos adicionales según el tipo -->
+        <div *ngIf="col.type === 'Integer' || col.type === 'Decimal'" class="row-2">
+          <div class="form-group">
+            <label>Valor mínimo</label>
+            <input type="number" [(ngModel)]="col.minValue">
+          </div>
+          <div class="form-group">
+            <label>Valor máximo</label>
+            <input type="number" [(ngModel)]="col.maxValue">
+          </div>
+        </div>
+        
+        <div *ngIf="col.type === 'String'" class="form-group">
+          <label>Longitud máxima</label>
+          <input type="number" [(ngModel)]="col.maxLength" placeholder="ej: 50">
+        </div>
+        
+        <div *ngIf="col.type === 'Enum'" class="form-group">
+          <label>Valores posibles (separados por coma)</label>
+          <input type="text" [(ngModel)]="col.possibleValuesText" placeholder="ej: Activo,Inactivo,Pendiente">
+        </div>
+        
+        <div class="row-2">
+          <label class="checkbox-label">
+            <input type="checkbox" [(ngModel)]="col.isNullable">
+            Permitir valores nulos
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-generate" (click)="generate()" [disabled]="isGenerating || columns.length === 0">
+      {{ isGenerating ? 'Generando...' : 'Generar y Descargar' }}
+    </button>
+  </div>
+
+  <div *ngIf="message" [class]="messageType">
+    {{ message }}
+  </div>
+</div>
