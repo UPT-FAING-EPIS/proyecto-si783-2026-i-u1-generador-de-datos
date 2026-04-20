@@ -49,22 +49,101 @@
         </div>
         
         <div class="form-group">
-          <label>Tipo de dato</label>
-          <select [(ngModel)]="col.type" (change)="onTypeChange(col)">
-            <option value="Integer">Número entero</option>
-            <option value="Decimal">Número decimal</option>
-            <option value="String">Texto</option>
-            <option value="Boolean">Verdadero/Falso</option>
-            <option value="DateTime">Fecha y hora</option>
-            <option value="Date">Fecha</option>
-            <option value="Time">Hora</option>
-            <option value="Email">Correo electrónico</option>
-            <option value="Phone">Teléfono</option>
-            <option value="Url">URL</option>
-            <option value="IPv4">Dirección IPv4</option>
-            <option value="Enum">Selección</option>
-          </select>
-        </div>
+  <label>Tipo de dato</label>
+  <select [(ngModel)]="col.type" (change)="onTypeChange(col)">
+    <!-- ===== TIPOS BÁSICOS ===== -->
+    <optgroup label="🔢 Tipos Básicos">
+      <option value="Integer">Número entero</option>
+      <option value="Decimal">Número decimal</option>
+      <option value="String">Texto</option>
+      <option value="Boolean">Verdadero/Falso</option>
+      <option value="DateTime">Fecha y hora</option>
+      <option value="Date">Fecha</option>
+      <option value="Time">Hora</option>
+      <option value="Guid">Identificador GUID</option>
+    </optgroup>
+    
+    <!-- ===== DATOS DE PERSONA ===== -->
+    <optgroup label="👤 Persona">
+      <option value="FullName">Nombre completo</option>
+      <option value="FirstName">Nombre</option>
+      <option value="LastName">Apellido</option>
+      <option value="UserName">Nombre de usuario</option>
+    </optgroup>
+    
+    <!-- ===== CONTACTO ===== -->
+    <optgroup label="📞 Contacto">
+      <option value="Email">Correo electrónico</option>
+      <option value="Phone">Teléfono</option>
+      <option value="CellPhone">Celular</option>
+    </optgroup>
+    
+    <!-- ===== UBICACIÓN ===== -->
+    <optgroup label="📍 Ubicación">
+      <option value="City">Ciudad</option>
+      <option value="Country">País</option>
+      <option value="Address">Dirección</option>
+      <option value="ZipCode">Código postal</option>
+      <option value="Latitude">Latitud</option>
+      <option value="Longitude">Longitud</option>
+    </optgroup>
+    
+    <!-- ===== INTERNET ===== -->
+    <optgroup label="🌐 Internet">
+      <option value="IPv4">Dirección IPv4</option>
+      <option value="IPv6">Dirección IPv6</option>
+      <option value="Url">URL</option>
+      <option value="DomainName">Nombre de dominio</option>
+    </optgroup>
+    
+    <!-- ===== FINANZAS ===== -->
+    <optgroup label="💰 Finanzas">
+      <option value="CreditCardNumber">Número de tarjeta</option>
+      <option value="Amount">Monto/Cantidad</option>
+      <option value="Currency">Moneda</option>
+      <option value="IBAN">IBAN</option>
+    </optgroup>
+    
+    <!-- ===== EMPRESA ===== -->
+    <optgroup label="🏢 Empresa">
+      <option value="CompanyName">Nombre de empresa</option>
+      <option value="JobTitle">Puesto de trabajo</option>
+      <option value="Department">Departamento</option>
+    </optgroup>
+    
+    <!-- ===== PRODUCTO ===== -->
+    <optgroup label="📦 Producto">
+      <option value="ProductName">Nombre de producto</option>
+      <option value="ProductDescription">Descripción</option>
+      <option value="Price">Precio</option>
+      <option value="SKU">Código SKU</option>
+    </optgroup>
+    
+    <!-- ===== TEXTO ===== -->
+    <optgroup label="📝 Texto">
+      <option value="Text">Texto largo</option>
+      <option value="Paragraph">Párrafo</option>
+      <option value="Sentence">Oración</option>
+      <option value="Word">Palabra</option>
+    </optgroup>
+    
+    <!-- ===== IDENTIFICADORES ===== -->
+    <optgroup label="🆔 Identificadores">
+      <option value="UUID">UUID</option>
+      <option value="Cuit">CUIT (Argentina)</option>
+      <option value="Rfc">RFC (México)</option>
+      <option value="Dni">DNI</option>
+    </optgroup>
+    
+    <!-- ===== OTROS ===== -->
+    <optgroup label="🎨 Otros">
+      <option value="Color">Color</option>
+      <option value="ImageUrl">URL de imagen</option>
+      <option value="Enum">Selección (Lista)</option>
+      <option value="Json">JSON</option>
+    </optgroup>
+  </select>
+</div>
         
         <!-- Campos adicionales según el tipo -->
         <div *ngIf="col.type === 'Integer' || col.type === 'Decimal'" class="row-2">

@@ -1,41 +1,27 @@
 using DataGenerator.API.Services;
-using Microsoft.AspNetCore.Cors;
-
-
+using DataGenerator.API.Generators;
+using DataGenerator.API.Generators.Generators;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Agregar CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAngular",
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:4200")
-                  .AllowAnyMethod()
-                  .AllowAnyHeader()
-                  .AllowCredentials();
-        });
-});
-
-// Inyección de dependencias
-builder.Services.AddScoped<IDynamicDataGenerator, DynamicDataGenerator>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Registrar servicios
+builder.Services.AddScoped<IDynamicDataGenerator, DynamicDataGenerator>();
+
+// Registrar todos los generadores semánticos
+builder.Services.AddSingleton<FullNameGenerator>();
+builder.Services.AddSingleton<EmailGenerator>();
+builder.Services.AddSingleton<CityGenerator>();
+builder.Services.AddSingleton<CreditCardGenerator>();
+
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-app.UseCors("AllowAngular");
-app.UseAuthorization();
+app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+app.UseSwagger();
+app.UseSwaggerUI();
 app.MapControllers();
 
 app.Run();

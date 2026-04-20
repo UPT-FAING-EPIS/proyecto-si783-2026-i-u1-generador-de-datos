@@ -22,6 +22,7 @@ interface ColumnDefinition {
   styleUrls: ['./app.css']
 })
 export class AppComponent {
+[x: string]: any;
   tableName = 'mi_tabla';
   recordCount = 100;
   outputFormat = 'Sql';
@@ -117,6 +118,7 @@ generate() {
   };
   
   // Mapeo de formato a número
+   
   let formatValue = 0;
   switch (this.outputFormat) {
     case 'Sql': formatValue = 0; break;
@@ -124,7 +126,6 @@ generate() {
     case 'Csv': formatValue = 2; break;
   }
   
-  // Mapeo de base de datos a número
   let dbTypeValue = 0;
   switch (this.databaseType) {
     case 'MySQL': dbTypeValue = 0; break;
@@ -132,39 +133,38 @@ generate() {
     case 'MicrosoftSQLServer': dbTypeValue = 2; break;
   }
   
-  // ✅ ESTRUCTURA CORRECTA
-const requestData = {
+  // ✅ ESTRUCTURA CORRECTA - SIN "request" envolviendo
+  const requestData = {
     TableName: this.tableName,
     RecordCount: this.recordCount,
     Format: formatValue,
     DatabaseType: dbTypeValue,
     Columns: this.columns.map(col => {
       const processedCol: any = {
-        name: col.name,
-        type: typeMap[col.type] ?? 2,
-        isNullable: col.isNullable
+        Name: col.name,
+        Type: this.getTypeValue(col.type),
+        IsNullable: col.isNullable
       };
       
-      // ✅ Asegurar que sean números, no strings
       if (col.minValue !== undefined && col.minValue !== null) {
-        processedCol.minValue = Number(col.minValue);  // ← Convertir a número
+        processedCol.MinValue = Number(col.minValue);
       }
       if (col.maxValue !== undefined && col.maxValue !== null) {
-        processedCol.maxValue = Number(col.maxValue);  // ← Convertir a número
+        processedCol.MaxValue = Number(col.maxValue);
       }
       if (col.maxLength !== undefined && col.maxLength !== null && col.type === 'String') {
-        processedCol.maxLength = Number(col.maxLength);  // ← Convertir a número
+        processedCol.MaxLength = Number(col.maxLength);
       }
       
       if (col.type === 'Enum' && col.possibleValuesText) {
-        processedCol.possibleValues = col.possibleValuesText.split(',').map(v => v.trim());
+        processedCol.PossibleValues = col.possibleValuesText.split(',').map(v => v.trim());
       }
       
       return processedCol;
     })
   };
   
-  console.log('Enviando:', requestData);
+  console.log('Enviando:', JSON.stringify(requestData, null, 2));
   
   this.isGenerating = true;
   this.message = 'Generando datos...';
@@ -195,5 +195,84 @@ const requestData = {
       setTimeout(() => this.message = '', 5000);
     }
   });
+}
+
+getTypeValue(typeName: string): number {
+  const typeMap: { [key: string]: number } = {
+    // Tipos básicos (0-7)
+    'Integer': 0,
+    'Decimal': 1,
+    'String': 2,
+    'Boolean': 3,
+    'DateTime': 4,
+    'Date': 5,
+    'Time': 6,
+    'Guid': 7,
+    
+    // Persona (8-11)
+    'FullName': 8,
+    'FirstName': 9,
+    'LastName': 10,
+    'UserName': 11,
+    
+    // Contacto (12-14)
+    'Email': 12,
+    'Phone': 13,
+    'CellPhone': 14,
+    
+    // Ubicación (15-20)
+    'City': 15,
+    'Country': 16,
+    'Address': 17,
+    'ZipCode': 18,
+    'Latitude': 19,
+    'Longitude': 20,
+    
+    // Internet (21-24)
+    'IPv4': 21,
+    'IPv6': 22,
+    'Url': 23,
+    'DomainName': 24,
+    
+    // Finanzas (25-29)
+    'CreditCardNumber': 25,
+    'CreditCardType': 26,
+    'Amount': 27,
+    'Currency': 28,
+    'IBAN': 29,
+    
+    // Empresa (30-32)
+    'CompanyName': 30,
+    'JobTitle': 31,
+    'Department': 32,
+    
+    // Producto (33-36)
+    'ProductName': 33,
+    'ProductDescription': 34,
+    'Price': 35,
+    'SKU': 36,
+    
+    // Texto (37-40)
+    'Text': 37,
+    'Paragraph': 38,
+    'Sentence': 39,
+    'Word': 40,
+    
+    // Identificadores (41-44)
+    'UUID': 41,
+    'Cuit': 42,
+    'Rfc': 43,
+    'Dni': 44,
+    
+    // Otros (45-50)
+    'Color': 45,
+    'ImageUrl': 46,
+    'DateRange': 47,
+    'Enum': 48,
+    'Json': 49,
+    'Null': 50
+  };
+  
+  return typeMap[typeName] ?? 2; // Por defecto String (2)
 }
 }

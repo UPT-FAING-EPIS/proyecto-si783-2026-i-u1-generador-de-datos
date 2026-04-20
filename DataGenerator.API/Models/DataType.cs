@@ -2,7 +2,7 @@ namespace DataGenerator.API.Models;
 
 public enum DataType
 {
-    // Tipos básicos
+    // Tipos básicos (ya existentes)
     Integer,
     Decimal,
     String,
@@ -12,19 +12,67 @@ public enum DataType
     Time,
     Guid,
     
-    // Tipos especiales
+    // ===== NUEVOS GENERADORES SEMÁNTICOS =====
+    // Persona
+    FullName,
+    FirstName,
+    LastName,
+    UserName,
+    
+    // Contacto
     Email,
     Phone,
-    Url,
+    CellPhone,
+    
+    // Ubicación
+    City,
+    Country,
+    Address,
+    ZipCode,
+    Latitude,
+    Longitude,
+    
+    // Internet
     IPv4,
     IPv6,
+    Url,
+    DomainName,
     
-    // Tipos para selección
+    // Finanzas
+    CreditCardNumber,
+    CreditCardType,
+    Amount,
+    Currency,
+    IBAN,
+    
+    // Empresa
+    CompanyName,
+    JobTitle,
+    Department,
+    
+    // Producto
+    ProductName,
+    ProductDescription,
+    Price,
+    SKU,
+    
+    // Texto
+    Text,
+    Paragraph,
+    Sentence,
+    Word,
+    
+    // Identificadores
+    UUID,
+    Cuit,      // Argentina
+    Rfc,       // México
+    Dni,       // España/Argentina
+    
+    // Otros
+    Color,
+    ImageUrl,
+    DateRange,
     Enum,
-    
-    // Tipos para JSON
     Json,
-    
-    // Nulos
     Null
 }
