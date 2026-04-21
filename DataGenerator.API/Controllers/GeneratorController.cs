@@ -17,63 +17,49 @@ public class GeneratorController : ControllerBase
         _generator = generator;
     }
     
-    [HttpPost("generate")]
-    public IActionResult Generate([FromBody] DynamicTableRequest request)
+ [HttpPost("generate")]
+public IActionResult Generate([FromBody] DynamicTableRequest request)
+{
+    try
     {
-        try
+        if (request.Columns == null || !request.Columns.Any())
         {
-            // Validar que haya columnas
-            if (request.Columns == null || !request.Columns.Any())
-            {
-                return BadRequest(new { error = "Debes definir al menos una columna" });
-            }
-            
-            // Generar datos
-            var data = _generator.GenerateData(request);
-            
-            // Exportar según formato
-            IDynamicExporter exporter = request.Format switch
-            {
-                OutputFormat.Sql => new SqlDynamicExporter(request.DatabaseType),
-                OutputFormat.Json => new JsonDynamicExporter(),
-                OutputFormat.Csv => new CsvDynamicExporter(),
-                _ => new JsonDynamicExporter()
-            };
-            
-            string content = exporter.Export(data, request);
-            byte[] bytes = Encoding.UTF8.GetBytes(content);
-            
-            string fileName = $"{request.TableName}_{DateTime.Now:yyyyMMdd_HHmmss}{exporter.GetFileExtension()}";
-            
-            return File(bytes, "application/octet-stream", fileName);
+            return BadRequest(new { error = "Debes definir al menos una columna" });
         }
-        catch (Exception ex)
+        
+        var data = _generator.GenerateData(request);
+        
+        // ✅ IMPORTANTE: Verificar el valor de request.Format
+        Console.WriteLine($"Formato recibido: {request.Format}");
+        
+        IDynamicExporter exporter = request.Format switch
         {
-            // ✅ Imprimir error DETALLADO en la consola
-            Console.WriteLine("=========================================");
-            Console.WriteLine("❌ ERROR EN GENERATE:");
-            Console.WriteLine($"Mensaje: {ex.Message}");
-            Console.WriteLine($"Tipo: {ex.GetType().Name}");
-            Console.WriteLine($"StackTrace: {ex.StackTrace}");
-            
-            if (ex.InnerException != null)
-            {
-                Console.WriteLine("--- INNER EXCEPTION ---");
-                Console.WriteLine($"Mensaje: {ex.InnerException.Message}");
-                Console.WriteLine($"StackTrace: {ex.InnerException.StackTrace}");
-            }
-            Console.WriteLine("=========================================");
-            
-            // ✅ Devolver error detallado al cliente
-            return StatusCode(500, new { 
-                error = ex.Message,
-                type = ex.GetType().Name,
-                stackTrace = ex.StackTrace,
-                innerError = ex.InnerException?.Message
-            });
-        }
+            OutputFormat.Sql => new SqlDynamicExporter(request.DatabaseType),
+            OutputFormat.Json => new JsonDynamicExporter(),
+            OutputFormat.Csv => new CsvDynamicExporter(),
+            OutputFormat.MongoDb => new MongoDbExporter(),  // ← Caso MongoDB
+            OutputFormat.Redis => new RedisExporter(),
+            OutputFormat.Neo4j => new Neo4jExporter(),
+            OutputFormat.Cassandra => new CassandraExporter(),
+            _ => new JsonDynamicExporter()
+        };
+        
+        string content = exporter.Export(data, request);
+        
+        // ✅ Verificar qué está generando
+        Console.WriteLine($"Contenido generado (primeros 200 chars): {content.Substring(0, Math.Min(200, content.Length))}");
+        
+        byte[] bytes = Encoding.UTF8.GetBytes(content);
+        string fileName = $"{request.TableName}_{DateTime.Now:yyyyMMdd_HHmmss}{exporter.GetFileExtension()}";
+        
+        return File(bytes, "application/octet-stream", fileName);
     }
-    
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error: {ex.Message}");
+        return StatusCode(500, new { error = ex.Message });
+    }
+}
     [HttpGet("types")]
     public IActionResult GetAvailableTypes()
     {

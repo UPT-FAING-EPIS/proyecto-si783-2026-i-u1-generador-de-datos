@@ -22,7 +22,6 @@ interface ColumnDefinition {
   styleUrls: ['./app.css']
 })
 export class AppComponent {
-[x: string]: any;
   tableName = 'mi_tabla';
   recordCount = 100;
   outputFormat = 'Sql';
@@ -73,206 +72,260 @@ export class AppComponent {
       column.maxLength = undefined;
     }
   }
-generate() {
-  if (!this.tableName.trim()) {
-    this.message = 'El nombre de la tabla es requerido';
-    this.messageType = 'error';
-    setTimeout(() => this.message = '', 5000);
-    return;
+
+  selectDatabase(db: string) {
+    this.databaseType = db;
+    
+    // Actualizar formato automáticamente según la base de datos
+    const sqlDbs = ['MySQL', 'PostgreSQL', 'MicrosoftSQLServer', 'Oracle'];
+    if (sqlDbs.includes(db)) {
+      this.outputFormat = 'Sql';
+    } else if (db === 'MongoDB') {
+      this.outputFormat = 'MongoDb';
+    } else if (db === 'Redis') {
+      this.outputFormat = 'Redis';
+    } else if (db === 'Neo4j') {
+      this.outputFormat = 'Neo4j';
+    } else if (db === 'Cassandra') {
+      this.outputFormat = 'Cassandra';
+    }
+  }
+
+  getOutputFormatLabel(): string {
+    const formatMap: { [key: string]: string } = {
+      'MySQL': 'SQL (MySQL)',
+      'PostgreSQL': 'SQL (PostgreSQL)',
+      'MicrosoftSQLServer': 'SQL (SQL Server)',
+      'Oracle': 'SQL (Oracle)',
+      'MongoDB': 'JavaScript / mongosh',
+      'Redis': 'Redis CLI',
+      'Neo4j': 'Cypher',
+      'Cassandra': 'CQL'
+    };
+    return formatMap[this.databaseType] || 'SQL';
+  }
+
+  getFileExtension(): string {
+    const extMap: { [key: string]: string } = {
+      'MySQL': 'sql',
+      'PostgreSQL': 'sql',
+      'MicrosoftSQLServer': 'sql',
+      'Oracle': 'sql',
+      'MongoDB': 'js',
+      'Redis': 'redis',
+      'Neo4j': 'cypher',
+      'Cassandra': 'cql'
+    };
+    return extMap[this.databaseType] || 'txt';
+  }
+
+  getTypeValue(typeName: string): number {
+    const typeMap: { [key: string]: number } = {
+      // Tipos básicos (0-7)
+      'Integer': 0,
+      'Decimal': 1,
+      'String': 2,
+      'Boolean': 3,
+      'DateTime': 4,
+      'Date': 5,
+      'Time': 6,
+      'Guid': 7,
+      
+      // Persona (8-11)
+      'FullName': 8,
+      'FirstName': 9,
+      'LastName': 10,
+      'UserName': 11,
+      
+      // Contacto (12-14)
+      'Email': 12,
+      'Phone': 13,
+      'CellPhone': 14,
+      
+      // Ubicación (15-20)
+      'City': 15,
+      'Country': 16,
+      'Address': 17,
+      'ZipCode': 18,
+      'Latitude': 19,
+      'Longitude': 20,
+      
+      // Internet (21-24)
+      'IPv4': 21,
+      'IPv6': 22,
+      'Url': 23,
+      'DomainName': 24,
+      
+      // Finanzas (25-29)
+      'CreditCardNumber': 25,
+      'CreditCardType': 26,
+      'Amount': 27,
+      'Currency': 28,
+      'IBAN': 29,
+      
+      // Empresa (30-32)
+      'CompanyName': 30,
+      'JobTitle': 31,
+      'Department': 32,
+      
+      // Producto (33-36)
+      'ProductName': 33,
+      'ProductDescription': 34,
+      'Price': 35,
+      'SKU': 36,
+      
+      // Texto (37-40)
+      'Text': 37,
+      'Paragraph': 38,
+      'Sentence': 39,
+      'Word': 40,
+      
+      // Identificadores (41-44)
+      'UUID': 41,
+      'Cuit': 42,
+      'Rfc': 43,
+      'Dni': 44,
+      
+      // Otros (45-50)
+      'Color': 45,
+      'ImageUrl': 46,
+      'DateRange': 47,
+      'Enum': 48,
+      'Json': 49,
+      'Null': 50
+    };
+    
+    return typeMap[typeName] ?? 2;
   }
   
-  if (this.columns.length === 0) {
-    this.message = 'Debes agregar al menos una columna';
-    this.messageType = 'error';
-    setTimeout(() => this.message = '', 5000);
-    return;
+getFormatValue(format: string): number {
+  const formats: { [key: string]: number } = {
+    'Sql': 0,
+    'Json': 1,
+    'Csv': 2,
+    'MongoDb': 3,    // ← Debe ser 3
+    'Redis': 4,
+    'Neo4j': 5,
+    'Cassandra': 6
+  };
+  return formats[format] ?? 0;
+}
+  getDatabaseTypeValue(db: string): number {
+    const databases: { [key: string]: number } = {
+      'MySQL': 0,
+      'PostgreSQL': 1,
+      'MicrosoftSQLServer': 2,
+      'Oracle': 3,
+      'MongoDB': 10,
+      'Redis': 11,
+      'Neo4j': 12,
+      'Cassandra': 13
+    };
+    return databases[db] ?? 0;
   }
-  
-  for (let col of this.columns) {
-    if (!col.name.trim()) {
-      this.message = 'Todas las columnas deben tener nombre';
+
+  generate() {
+    // Validaciones
+    if (!this.tableName.trim()) {
+      this.message = 'El nombre de la tabla es requerido';
       this.messageType = 'error';
       setTimeout(() => this.message = '', 5000);
       return;
     }
-  }
-  
-  // Mapeo de tipos a números
-  const typeMap: { [key: string]: number } = {
-    'Integer': 0,
-    'Decimal': 1,
-    'String': 2,
-    'Boolean': 3,
-    'DateTime': 4,
-    'Date': 5,
-    'Time': 6,
-    'Guid': 7,
-    'Email': 8,
-    'Phone': 9,
-    'Url': 10,
-    'IPv4': 11,
-    'IPv6': 12,
-    'Enum': 13,
-    'Json': 14,
-    'Null': 15
-  };
-  
-  // Mapeo de formato a número
-   
-  let formatValue = 0;
-  switch (this.outputFormat) {
-    case 'Sql': formatValue = 0; break;
-    case 'Json': formatValue = 1; break;
-    case 'Csv': formatValue = 2; break;
-  }
-  
-  let dbTypeValue = 0;
-  switch (this.databaseType) {
-    case 'MySQL': dbTypeValue = 0; break;
-    case 'PostgreSQL': dbTypeValue = 1; break;
-    case 'MicrosoftSQLServer': dbTypeValue = 2; break;
-  }
-  
-  // ✅ ESTRUCTURA CORRECTA - SIN "request" envolviendo
-  const requestData = {
-    TableName: this.tableName,
-    RecordCount: this.recordCount,
-    Format: formatValue,
-    DatabaseType: dbTypeValue,
-    Columns: this.columns.map(col => {
-      const processedCol: any = {
-        Name: col.name,
-        Type: this.getTypeValue(col.type),
-        IsNullable: col.isNullable
-      };
-      
-      if (col.minValue !== undefined && col.minValue !== null) {
-        processedCol.MinValue = Number(col.minValue);
-      }
-      if (col.maxValue !== undefined && col.maxValue !== null) {
-        processedCol.MaxValue = Number(col.maxValue);
-      }
-      if (col.maxLength !== undefined && col.maxLength !== null && col.type === 'String') {
-        processedCol.MaxLength = Number(col.maxLength);
-      }
-      
-      if (col.type === 'Enum' && col.possibleValuesText) {
-        processedCol.PossibleValues = col.possibleValuesText.split(',').map(v => v.trim());
-      }
-      
-      return processedCol;
-    })
-  };
-  
-  console.log('Enviando:', JSON.stringify(requestData, null, 2));
-  
-  this.isGenerating = true;
-  this.message = 'Generando datos...';
-  this.messageType = 'info';
-  
-  this.http.post('http://localhost:5000/api/generator/generate', requestData, {
-    responseType: 'blob'
-  }).subscribe({
-    next: (blob) => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      const extension = this.outputFormat === 'Sql' ? 'sql' : this.outputFormat.toLowerCase();
-      a.download = `${this.tableName}_${Date.now()}.${extension}`;
-      a.click();
-      window.URL.revokeObjectURL(url);
-      
-      this.message = '✅ Archivo generado correctamente';
-      this.messageType = 'success';
-      this.isGenerating = false;
-      setTimeout(() => this.message = '', 5000);
-    },
-    error: (err) => {
-      console.error('Error:', err);
-      this.message = '❌ Error al generar';
+    
+    if (this.columns.length === 0) {
+      this.message = 'Debes agregar al menos una columna';
       this.messageType = 'error';
-      this.isGenerating = false;
       setTimeout(() => this.message = '', 5000);
+      return;
     }
-  });
-}
-
-getTypeValue(typeName: string): number {
-  const typeMap: { [key: string]: number } = {
-    // Tipos básicos (0-7)
-    'Integer': 0,
-    'Decimal': 1,
-    'String': 2,
-    'Boolean': 3,
-    'DateTime': 4,
-    'Date': 5,
-    'Time': 6,
-    'Guid': 7,
     
-    // Persona (8-11)
-    'FullName': 8,
-    'FirstName': 9,
-    'LastName': 10,
-    'UserName': 11,
+    for (let col of this.columns) {
+      if (!col.name.trim()) {
+        this.message = 'Todas las columnas deben tener nombre';
+        this.messageType = 'error';
+        setTimeout(() => this.message = '', 5000);
+        return;
+      }
+    }
     
-    // Contacto (12-14)
-    'Email': 12,
-    'Phone': 13,
-    'CellPhone': 14,
+    // Determinar outputFormat según la base de datos seleccionada
+    let outputFormat = 'Sql';
+    const formatMap: { [key: string]: string } = {
+      'MySQL': 'Sql',
+      'PostgreSQL': 'Sql',
+      'MicrosoftSQLServer': 'Sql',
+      'Oracle': 'Sql',
+      'MongoDB': 'MongoDb',
+      'Redis': 'Redis',
+      'Neo4j': 'Neo4j',
+      'Cassandra': 'Cassandra'
+    };
+    outputFormat = formatMap[this.databaseType] || 'Sql';
     
-    // Ubicación (15-20)
-    'City': 15,
-    'Country': 16,
-    'Address': 17,
-    'ZipCode': 18,
-    'Latitude': 19,
-    'Longitude': 20,
+    // Construir request
+    const requestData = {
+      TableName: this.tableName,
+      RecordCount: this.recordCount,
+      Format: this.getFormatValue(outputFormat),
+      DatabaseType: this.getDatabaseTypeValue(this.databaseType),
+      Columns: this.columns.map(col => {
+        const processedCol: any = {
+          Name: col.name,
+          Type: this.getTypeValue(col.type),
+          IsNullable: col.isNullable
+        };
+        
+        if (col.minValue !== undefined && col.minValue !== null) {
+          processedCol.MinValue = Number(col.minValue);
+        }
+        if (col.maxValue !== undefined && col.maxValue !== null) {
+          processedCol.MaxValue = Number(col.maxValue);
+        }
+        if (col.maxLength !== undefined && col.maxLength !== null && col.type === 'String') {
+          processedCol.MaxLength = Number(col.maxLength);
+        }
+        
+        if (col.type === 'Enum' && col.possibleValuesText) {
+          processedCol.PossibleValues = col.possibleValuesText.split(',').map(v => v.trim());
+        }
+        
+        return processedCol;
+      })
+    };
     
-    // Internet (21-24)
-    'IPv4': 21,
-    'IPv6': 22,
-    'Url': 23,
-    'DomainName': 24,
+    console.log('Enviando:', JSON.stringify(requestData, null, 2));
     
-    // Finanzas (25-29)
-    'CreditCardNumber': 25,
-    'CreditCardType': 26,
-    'Amount': 27,
-    'Currency': 28,
-    'IBAN': 29,
+    this.isGenerating = true;
+    this.message = 'Generando datos...';
+    this.messageType = 'info';
     
-    // Empresa (30-32)
-    'CompanyName': 30,
-    'JobTitle': 31,
-    'Department': 32,
-    
-    // Producto (33-36)
-    'ProductName': 33,
-    'ProductDescription': 34,
-    'Price': 35,
-    'SKU': 36,
-    
-    // Texto (37-40)
-    'Text': 37,
-    'Paragraph': 38,
-    'Sentence': 39,
-    'Word': 40,
-    
-    // Identificadores (41-44)
-    'UUID': 41,
-    'Cuit': 42,
-    'Rfc': 43,
-    'Dni': 44,
-    
-    // Otros (45-50)
-    'Color': 45,
-    'ImageUrl': 46,
-    'DateRange': 47,
-    'Enum': 48,
-    'Json': 49,
-    'Null': 50
-  };
-  
-  return typeMap[typeName] ?? 2; // Por defecto String (2)
-}
+    this.http.post('http://localhost:5000/api/generator/generate', requestData, {
+      responseType: 'blob'
+    }).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        
+        // Usar la extensión según la base de datos
+        const extension = this.getFileExtension();
+        a.download = `${this.tableName}_${Date.now()}.${extension}`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        
+        this.message = `✅ Archivo generado correctamente (${extension})`;
+        this.messageType = 'success';
+        this.isGenerating = false;
+        setTimeout(() => this.message = '', 5000);
+      },
+      error: (err) => {
+        console.error('Error:', err);
+        this.message = '❌ Error al generar los datos';
+        this.messageType = 'error';
+        this.isGenerating = false;
+        setTimeout(() => this.message = '', 5000);
+      }
+    });
+  }
 }

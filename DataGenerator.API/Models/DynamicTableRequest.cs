@@ -11,7 +11,11 @@ public class DynamicTableRequest
 
 public enum OutputFormat
 {
-    Sql,
-    Json,
-    Csv
+    Sql = 0,
+    Json = 1,
+    Csv = 2,
+    MongoDb = 3,    // ← Debe existir
+    Redis = 4,
+    Neo4j = 5,
+    Cassandra = 6
 }

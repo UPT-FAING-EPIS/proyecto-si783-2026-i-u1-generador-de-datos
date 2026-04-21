@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DataGenerator.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cbd4b9665ec87cdcf71805fe89dd584c3a143eb4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6e5521e80bee640f67fe4fad2898bfe65121665d")]
 [assembly: System.Reflection.AssemblyProductAttribute("DataGenerator.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DataGenerator.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
