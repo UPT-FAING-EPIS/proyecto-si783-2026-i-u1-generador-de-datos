@@ -41,5 +41,5 @@ public class Neo4jExporter : IDynamicExporter
         return $"'{value.ToString()?.Replace("'", "\\'")}'";
     }
     
-    public string GetFileExtension() => "cypher";
+    public string GetFileExtension() => ".cypher";
 }

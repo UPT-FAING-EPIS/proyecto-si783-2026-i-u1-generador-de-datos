@@ -355,6 +355,22 @@
       color: #8b949e;
       font-family: monospace;
     }
+    .btn-template {
+        background: #21262d;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+        padding: 8px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-family: monospace;
+        transition: all 0.2s;
+      }
+      .btn-template:hover {
+        background: #30363d;
+        border-color: #58a6ff;
+        color: #58a6ff;
+      }
   </style>
 </head>
 <body>
@@ -417,6 +433,18 @@
             <input type="radio" name="dbType" [value]="'Cassandra'" [(ngModel)]="databaseType">
             <label>Cassandra</label>
           </div>
+          <div class="db-option" [class.selected]="databaseType === 'Elasticsearch'" (click)="selectDatabase('Elasticsearch')">
+            <input type="radio" name="dbType" [value]="'Elasticsearch'" [(ngModel)]="databaseType">
+            <label>Elasticsearch</label>
+          </div>
+          <div class="db-option" [class.selected]="databaseType === 'InfluxDB'" (click)="selectDatabase('InfluxDB')">
+            <input type="radio" name="dbType" [value]="'InfluxDB'" [(ngModel)]="databaseType">
+            <label>InfluxDB</label>
+          </div>
+          <div class="db-option" [class.selected]="databaseType === 'DynamoDB'" (click)="selectDatabase('DynamoDB')">
+            <input type="radio" name="dbType" [value]="'DynamoDB'" [(ngModel)]="databaseType">
+            <label>DynamoDB</label>
+          </div>
         </div>
 
         <!-- Información del formato de salida -->
@@ -443,7 +471,23 @@
             <h3>[{{ i }}] {{ col.name || 'unnamed' }}</h3>
             <button class="btn-remove" (click)="removeColumn(i)">✕</button>
           </div>
-          
+          <!--  TEMPLATES DE DOMINIO 
+          <div class="card">
+            <div class="card-header">
+              <h2>⚡ quick templates</h2>
+            </div>
+            <div class="card-body">
+              <p style="color:#8b949e; font-size:0.8rem; margin-bottom:12px;">
+                Carga columnas predefinidas según tu dominio:
+              </p>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn-template" (click)="loadTemplate('ecommerce')">🛒 E-Commerce</button>
+                <button class="btn-template" (click)="loadTemplate('banking')">🏦 Bancario</button>
+                <button class="btn-template" (click)="loadTemplate('users')">👤 Usuarios</button>
+                <button class="btn-template" (click)="loadTemplate('iot')">📡 IoT / Sensores</button>
+              </div>
+            </div>
+          </div> -->
           <div class="form-group" style="margin-bottom: 10px;">
             <label>NAME</label>
             <input type="text" [(ngModel)]="col.name" placeholder="field_name">

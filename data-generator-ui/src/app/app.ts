@@ -51,6 +51,8 @@ export class AppComponent {
     }
   }
 
+  
+
   addColumn() {
     this.columns.push({
       name: '',
@@ -74,50 +76,43 @@ export class AppComponent {
   }
 
   selectDatabase(db: string) {
-    this.databaseType = db;
-    
-    // Actualizar formato automáticamente según la base de datos
-    const sqlDbs = ['MySQL', 'PostgreSQL', 'MicrosoftSQLServer', 'Oracle'];
-    if (sqlDbs.includes(db)) {
-      this.outputFormat = 'Sql';
-    } else if (db === 'MongoDB') {
-      this.outputFormat = 'MongoDb';
-    } else if (db === 'Redis') {
-      this.outputFormat = 'Redis';
-    } else if (db === 'Neo4j') {
-      this.outputFormat = 'Neo4j';
-    } else if (db === 'Cassandra') {
-      this.outputFormat = 'Cassandra';
-    }
-  }
+  this.databaseType = db;
+
+  const formatMap: { [key: string]: string } = {
+    'MySQL': 'Sql', 'PostgreSQL': 'Sql',
+    'MicrosoftSQLServer': 'Sql', 'Oracle': 'Sql',
+    'MongoDB': 'MongoDb',
+    'Redis': 'Redis',
+    'DynamoDB': 'DynamoDb',
+    'Elasticsearch': 'Elasticsearch',
+    'Neo4j': 'Neo4j',
+    'Cassandra': 'Cassandra',
+    'InfluxDB': 'InfluxDb'
+  };
+  this.outputFormat = formatMap[db] || 'Sql';
+}
 
   getOutputFormatLabel(): string {
-    const formatMap: { [key: string]: string } = {
-      'MySQL': 'SQL (MySQL)',
-      'PostgreSQL': 'SQL (PostgreSQL)',
-      'MicrosoftSQLServer': 'SQL (SQL Server)',
-      'Oracle': 'SQL (Oracle)',
-      'MongoDB': 'JavaScript / mongosh',
-      'Redis': 'Redis CLI',
-      'Neo4j': 'Cypher',
-      'Cassandra': 'CQL'
-    };
-    return formatMap[this.databaseType] || 'SQL';
-  }
+  const formatMap: { [key: string]: string } = {
+    'MySQL': 'SQL (MySQL)', 'PostgreSQL': 'SQL (PostgreSQL)',
+    'MicrosoftSQLServer': 'SQL (SQL Server)', 'Oracle': 'SQL (Oracle)',
+    'MongoDB': 'JSON (mongosh)', 'Redis': 'Redis CLI',
+    'DynamoDB': 'AWS CLI (PutItem)', 'Elasticsearch': 'ES JSON + REST',
+    'Neo4j': 'Cypher', 'Cassandra': 'CQL', 'InfluxDB': 'Line Protocol'
+  };
+  return formatMap[this.databaseType] || 'SQL';
+}
 
   getFileExtension(): string {
-    const extMap: { [key: string]: string } = {
-      'MySQL': 'sql',
-      'PostgreSQL': 'sql',
-      'MicrosoftSQLServer': 'sql',
-      'Oracle': 'sql',
-      'MongoDB': 'js',
-      'Redis': 'redis',
-      'Neo4j': 'cypher',
-      'Cassandra': 'cql'
-    };
-    return extMap[this.databaseType] || 'txt';
-  }
+  const extMap: { [key: string]: string } = {
+    'MySQL': 'sql', 'PostgreSQL': 'sql',
+    'MicrosoftSQLServer': 'sql', 'Oracle': 'sql',
+    'MongoDB': 'json', 'Redis': 'redis',
+    'DynamoDB': 'json', 'Elasticsearch': 'json',
+    'Neo4j': 'cypher', 'Cassandra': 'cql', 'InfluxDB': 'lp'
+  };
+  return extMap[this.databaseType] || 'txt';
+}
 
   getTypeValue(typeName: string): number {
     const typeMap: { [key: string]: number } = {
@@ -200,29 +195,19 @@ export class AppComponent {
   
 getFormatValue(format: string): number {
   const formats: { [key: string]: number } = {
-    'Sql': 0,
-    'Json': 1,
-    'Csv': 2,
-    'MongoDb': 3,    // ← Debe ser 3
-    'Redis': 4,
-    'Neo4j': 5,
-    'Cassandra': 6
+    'Sql': 0, 'Json': 1, 'Csv': 2, 'MongoDb': 3, 'Redis': 4,
+    'Neo4j': 5, 'Cassandra': 6, 'Elasticsearch': 7, 'InfluxDb': 8, 'DynamoDb': 9
   };
   return formats[format] ?? 0;
 }
   getDatabaseTypeValue(db: string): number {
-    const databases: { [key: string]: number } = {
-      'MySQL': 0,
-      'PostgreSQL': 1,
-      'MicrosoftSQLServer': 2,
-      'Oracle': 3,
-      'MongoDB': 10,
-      'Redis': 11,
-      'Neo4j': 12,
-      'Cassandra': 13
-    };
-    return databases[db] ?? 0;
-  }
+  const databases: { [key: string]: number } = {
+    'MySQL': 0, 'PostgreSQL': 1, 'MicrosoftSQLServer': 2, 'Oracle': 3,
+    'MongoDB': 10, 'Redis': 11, 'DynamoDB': 12,
+    'Elasticsearch': 13, 'Neo4j': 14, 'Cassandra': 15, 'InfluxDB': 16
+  };
+  return databases[db] ?? 0;
+}
 
   generate() {
     // Validaciones
@@ -252,15 +237,12 @@ getFormatValue(format: string): number {
     // Determinar outputFormat según la base de datos seleccionada
     let outputFormat = 'Sql';
     const formatMap: { [key: string]: string } = {
-      'MySQL': 'Sql',
-      'PostgreSQL': 'Sql',
-      'MicrosoftSQLServer': 'Sql',
-      'Oracle': 'Sql',
-      'MongoDB': 'MongoDb',
-      'Redis': 'Redis',
-      'Neo4j': 'Neo4j',
-      'Cassandra': 'Cassandra'
-    };
+  'MySQL': 'Sql', 'PostgreSQL': 'Sql',
+  'MicrosoftSQLServer': 'Sql', 'Oracle': 'Sql',
+  'MongoDB': 'MongoDb', 'Redis': 'Redis',
+  'DynamoDB': 'DynamoDb', 'Elasticsearch': 'Elasticsearch',
+  'Neo4j': 'Neo4j', 'Cassandra': 'Cassandra', 'InfluxDB': 'InfluxDb'
+};
     outputFormat = formatMap[this.databaseType] || 'Sql';
     
     // Construir request
@@ -327,5 +309,86 @@ getFormatValue(format: string): number {
         setTimeout(() => this.message = '', 5000);
       }
     });
+
+    
   }
+  // ===== TEMPLATES DE DOMINIO =====
+readonly templates: { [key: string]: { label: string; icon: string; columns: any[] } } = {
+  ecommerce: {
+    label: 'E-Commerce',
+    icon: '🛒',
+    columns: [
+      { name: 'product_id',    type: 'Guid',               isNullable: false },
+      { name: 'product_name',  type: 'ProductName',        isNullable: false },
+      { name: 'description',   type: 'ProductDescription', isNullable: true  },
+      { name: 'price',         type: 'Price',              isNullable: false },
+      { name: 'sku',           type: 'SKU',                isNullable: false },
+      { name: 'stock',         type: 'Integer',            isNullable: false, minValue: 0, maxValue: 500 },
+      { name: 'category',      type: 'Department',         isNullable: false },
+      { name: 'image_url',     type: 'ImageUrl',           isNullable: true  },
+    ]
+  },
+  banking: {
+    label: 'Bancario',
+    icon: '🏦',
+    columns: [
+      { name: 'account_id',    type: 'Guid',              isNullable: false },
+      { name: 'full_name',     type: 'FullName',          isNullable: false },
+      { name: 'email',         type: 'Email',             isNullable: false },
+      { name: 'iban',          type: 'IBAN',              isNullable: false },
+      { name: 'card_number',   type: 'CreditCardNumber',  isNullable: false },
+      { name: 'balance',       type: 'Amount',            isNullable: false },
+      { name: 'currency',      type: 'Currency',          isNullable: false },
+      { name: 'created_at',    type: 'DateTime',          isNullable: false },
+    ]
+  },
+  users: {
+    label: 'Usuarios',
+    icon: '👤',
+    columns: [
+      { name: 'user_id',       type: 'Guid',      isNullable: false },
+      { name: 'username',      type: 'UserName',  isNullable: false },
+      { name: 'full_name',     type: 'FullName',  isNullable: false },
+      { name: 'email',         type: 'Email',     isNullable: false },
+      { name: 'phone',         type: 'Phone',     isNullable: true  },
+      { name: 'city',          type: 'City',      isNullable: false },
+      { name: 'country',       type: 'Country',   isNullable: false },
+      { name: 'created_at',    type: 'DateTime',  isNullable: false },
+    ]
+  },
+  iot: {
+    label: 'IoT / Sensores',
+    icon: '📡',
+    columns: [
+      { name: 'device_id',     type: 'Guid',      isNullable: false },
+      { name: 'ip_address',    type: 'IPv4',      isNullable: false },
+      { name: 'latitude',      type: 'Latitude',  isNullable: false },
+      { name: 'longitude',     type: 'Longitude', isNullable: false },
+      { name: 'timestamp',     type: 'DateTime',  isNullable: false },
+      { name: 'temperature',   type: 'Decimal',   isNullable: false, minValue: -20, maxValue: 80 },
+      { name: 'is_online',     type: 'Boolean',   isNullable: false },
+    ]
+  }
+};
+
+// Método para cargar un template
+loadTemplate(key: string) {
+  const template = this.templates[key];
+  if (!template) return;
+
+  this.columns = template.columns.map(col => ({
+    name: col.name,
+    type: col.type,
+    isNullable: col.isNullable ?? false,
+    minValue: col.minValue ?? null,
+    maxValue: col.maxValue ?? null,
+    maxLength: undefined,
+    possibleValuesText: ''
+  }));
+
+  this.message = `✅ Template "${template.label}" cargado con ${this.columns.length} columnas`;
+  this.messageType = 'success';
+  setTimeout(() => this.message = '', 4000);
+}
+
 }

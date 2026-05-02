@@ -1,6 +1,5 @@
-using DataGenerator.API.Services;
-using DataGenerator.API.Generators;
-using DataGenerator.API.Generators.Generators;
+﻿using DataGenerator.API.Services;
+using DataGenerator.API.Factories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,14 +7,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Registrar servicios
+// Servicios
 builder.Services.AddScoped<IDynamicDataGenerator, DynamicDataGenerator>();
 
-// Registrar todos los generadores semánticos
-builder.Services.AddSingleton<FullNameGenerator>();
-builder.Services.AddSingleton<EmailGenerator>();
-builder.Services.AddSingleton<CityGenerator>();
-builder.Services.AddSingleton<CreditCardGenerator>();
+// Factory de exporters (reemplaza los "new" del controller)
+builder.Services.AddSingleton<IExporterFactory, ExporterFactory>();
 
 var app = builder.Build();
 
