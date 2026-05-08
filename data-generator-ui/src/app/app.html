@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Generator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', monospace;
+      background: #0d1117;
+      color: #c9d1d9;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #21262d;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: #f0f6fc;
+      letter-spacing: -0.5px;
+    }
+
+    .header h1 span {
+      color: #58a6ff;
+      font-weight: 600;
+    }
+
+    .header .subtitle {
+      font-size: 0.8rem;
+      color: #8b949e;
+      margin-top: 8px;
+      font-family: monospace;
+    }
+
+    /* Cards */
+    .card {
+      background: #161b22;
+      border: 1px solid #21262d;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 16px 20px;
+      background: #0d1117;
+      border-bottom: 1px solid #21262d;
+    }
+
+    .card-header h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #e6edf3;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    /* Forms */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #8b949e;
+    }
+
+    .form-group input,
+    .form-group select {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: #c9d1d9;
+      font-size: 0.85rem;
+      font-family: monospace;
+      transition: all 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #58a6ff;
+      box-shadow: 0 0 0 2px rgba(88,166,255,0.1);
+    }
+
+    /* Database Selector */
+    .db-selector {
+      margin-top: 20px;
+    }
+
+    .db-selector h3 {
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #8b949e;
+      margin-bottom: 12px;
+    }
+
+    .db-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .db-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.8rem;
+    }
+
+    .db-option:hover {
+      border-color: #58a6ff;
+      background: #161b22;
+    }
+
+    .db-option.selected {
+      border-color: #58a6ff;
+      background: #1f6feb1a;
+    }
+
+    .db-option input {
+      margin: 0;
+      width: 14px;
+      height: 14px;
+      accent-color: #58a6ff;
+    }
+
+    .db-option label {
+      cursor: pointer;
+      color: #c9d1d9;
+    }
+
+    /* Output info */
+    .output-info {
+      margin-top: 16px;
+      padding: 10px 12px;
+      background: #0d1117;
+      border: 1px solid #21262d;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 0.75rem;
+    }
+
+    .output-info span {
+      color: #58a6ff;
+    }
+
+    /* Columns */
+    .columns-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .btn-add {
+      background: #21262d;
+      border: 1px solid #30363d;
+      padding: 6px 14px;
+      border-radius: 6px;
+      color: #c9d1d9;
+      font-size: 0.7rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: monospace;
+    }
+
+    .btn-add:hover {
+      background: #30363d;
+      border-color: #58a6ff;
+    }
+
+    .columns-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 16px;
+    }
+
+    .column-card {
+      background: #0d1117;
+      border: 1px solid #21262d;
+      border-radius: 6px;
+      padding: 14px;
+      transition: all 0.2s;
+    }
+
+    .column-card:hover {
+      border-color: #30363d;
+    }
+
+    .card-header-col {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #21262d;
+    }
+
+    .card-header-col h3 {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #58a6ff;
+      font-family: monospace;
+    }
+
+    .btn-remove {
+      background: #21262d;
+      border: 1px solid #30363d;
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      color: #f85149;
+      cursor: pointer;
+      font-size: 0.7rem;
+      transition: all 0.2s;
+    }
+
+    .btn-remove:hover {
+      background: #f851491a;
+      border-color: #f85149;
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .checkbox-group input {
+      width: 14px;
+      height: 14px;
+      accent-color: #58a6ff;
+    }
+
+    .checkbox-group label {
+      font-size: 0.7rem;
+      color: #8b949e;
+      text-transform: none;
+      letter-spacing: normal;
+    }
+
+    /* Actions */
+    .actions {
+      margin-top: 24px;
+      text-align: center;
+    }
+
+    .btn-generate {
+      background: #238636;
+      border: none;
+      padding: 10px 32px;
+      border-radius: 6px;
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 500;
+      font-family: monospace;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-generate:hover:not(:disabled) {
+      background: #2ea043;
+    }
+
+    .btn-generate:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Messages */
+    .message {
+      margin-top: 20px;
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-family: monospace;
+    }
+
+    .success {
+      background: #0f2d1f;
+      border: 1px solid #238636;
+      color: #7ee787;
+    }
+
+    .error {
+      background: #2d1f1f;
+      border: 1px solid #f85149;
+      color: #ff7b72;
+    }
+
+    .info {
+      background: #1f2d3d;
+      border: 1px solid #58a6ff;
+      color: #79c0ff;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #21262d;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.65rem;
+      color: #8b949e;
+      font-family: monospace;
+    }
+    .btn-template {
+        background: #21262d;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+        padding: 8px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-family: monospace;
+        transition: all 0.2s;
+      }
+      .btn-template:hover {
+        background: #30363d;
+        border-color: #58a6ff;
+        color: #58a6ff;
+      }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1><span>data</span>_generator</h1>
+    <p class="subtitle">Synthetic data generator for multiple databases</p>
+  </div>
+
+  <!-- Configuración -->
+  <div class="card">
+    <div class="card-header">
+      <h2>⚙️ configuration</h2>
+    </div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>TABLE / COLLECTION</label>
+          <input type="text" [(ngModel)]="tableName" placeholder="clientes, productos, usuarios">
+        </div>
+        <div class="form-group">
+          <label>RECORDS</label>
+          <input type="number" [(ngModel)]="recordCount" min="1" max="1000000">
+        </div>
+      </div>
+
+      <!-- Base de Datos Destino (única selección) -->
+      <div class="db-selector">
+        <h3>🎯 TARGET DATABASE</h3>
+        <div class="db-grid">
+          <div class="db-option" [class.selected]="databaseType === 'MySQL'" (click)="selectDatabase('MySQL')">
+            <input type="radio" name="dbType" [value]="'MySQL'" [(ngModel)]="databaseType">
+            <label>MySQL</label>
+          </div>
+          <div class="db-option" [class.selected]="databaseType === 'PostgreSQL'" (click)="selectDatabase('PostgreSQL')">
+            <input type="radio" name="dbType" [value]="'PostgreSQL'" [(ngModel)]="databaseType">
+            <label>PostgreSQL</label>
+          </div>
+          <div class="db-option" [class.selected]="databaseType === 'SQLServer'" (click)="selectDatabase('SQLServer')">
+            <input type="radio" name="dbType" [value]="'SQLServer'" [(ngModel)]="databaseType">
+            <label>SQL Server</label>
+          </div>
+          <div class="db-option" [class.selected]="databaseType === 'Oracle'" (click)="selectDatabase('Oracle')">
+            <input type="radio" name="dbType" [value]="'Oracle'" [(ngModel)]="databaseType">
+            <label>Oracle</label>
+          </div>
+          <div class="db-option" [class.selected]="databaseType === 'MongoDB'" (click)="selectDatabase('MongoDB')">
+            <input type="radio" name="dbType" [value]="'MongoDB'" [(ngModel)]="databaseType">
+            <label>MongoDB</label>
+          </div>
+          <div class="db-option" [class.selected]="databaseType === 'Redis'" (click)="selectDatabase('Redis')">
+            <input type="radio" name="dbType" [value]="'Redis'" [(ngModel)]="databaseType">
+            <label>Redis</label>
+          </div>
+          <div class="db-option" [class.selected]="databaseType === 'Neo4j'" (click)="selectDatabase('Neo4j')">
+            <input type="radio" name="dbType" [value]="'Neo4j'" [(ngModel)]="databaseType">
+            <label>Neo4j</label>
+          </div>
+          <div class="db-option" [class.selected]="databaseType === 'Cassandra'" (click)="selectDatabase('Cassandra')">
+            <input type="radio" name="dbType" [value]="'Cassandra'" [(ngModel)]="databaseType">
+            <label>Cassandra</label>
+          </div>
+          <div class="db-option" [class.selected]="databaseType === 'Elasticsearch'" (click)="selectDatabase('Elasticsearch')">
+            <input type="radio" name="dbType" [value]="'Elasticsearch'" [(ngModel)]="databaseType">
+            <label>Elasticsearch</label>
+          </div>
+          <div class="db-option" [class.selected]="databaseType === 'InfluxDB'" (click)="selectDatabase('InfluxDB')">
+            <input type="radio" name="dbType" [value]="'InfluxDB'" [(ngModel)]="databaseType">
+            <label>InfluxDB</label>
+          </div>
+          <div class="db-option" [class.selected]="databaseType === 'DynamoDB'" (click)="selectDatabase('DynamoDB')">
+            <input type="radio" name="dbType" [value]="'DynamoDB'" [(ngModel)]="databaseType">
+            <label>DynamoDB</label>
+          </div>
+        </div>
+
+        <!-- Información del formato de salida -->
+        <div class="output-info">
+          📤 output format: <span>{{ getOutputFormatLabel() }}</span>
+          <span style="margin-left: 16px;">📁 extension: .{{ getFileExtension() }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Columnas -->
+  <div class="card">
+    <div class="card-header">
+      <div class="columns-header">
+        <h2>📋 schema.columns</h2>
+        <button class="btn-add" (click)="addColumn()">+ add column</button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="columns-grid">
+        <div class="column-card" *ngFor="let col of columns; let i = index">
+          <div class="card-header-col">
+            <h3>[{{ i }}] {{ col.name || 'unnamed' }}</h3>
+            <button class="btn-remove" (click)="removeColumn(i)">✕</button>
+          </div>
+          <!--  TEMPLATES DE DOMINIO 
+          <div class="card">
+            <div class="card-header">
+              <h2>⚡ quick templates</h2>
+            </div>
+            <div class="card-body">
+              <p style="color:#8b949e; font-size:0.8rem; margin-bottom:12px;">
+                Carga columnas predefinidas según tu dominio:
+              </p>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn-template" (click)="loadTemplate('ecommerce')">🛒 E-Commerce</button>
+                <button class="btn-template" (click)="loadTemplate('banking')">🏦 Bancario</button>
+                <button class="btn-template" (click)="loadTemplate('users')">👤 Usuarios</button>
+                <button class="btn-template" (click)="loadTemplate('iot')">📡 IoT / Sensores</button>
+              </div>
+            </div>
+          </div> -->
+          <div class="form-group" style="margin-bottom: 10px;">
+            <label>NAME</label>
+            <input type="text" [(ngModel)]="col.name" placeholder="field_name">
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 10px;">
+            <label>TYPE</label>
+            <select [(ngModel)]="col.type" (change)="onTypeChange(col)">
+              <optgroup label="basic">
+                <option value="Integer">integer</option>
+                <option value="Decimal">decimal</option>
+                <option value="String">string</option>
+                <option value="Boolean">boolean</option>
+                <option value="DateTime">datetime</option>
+                <option value="Date">date</option>
+                <option value="Guid">guid</option>
+              </optgroup>
+              <optgroup label="person">
+                <option value="FullName">full_name</option>
+                <option value="FirstName">first_name</option>
+                <option value="LastName">last_name</option>
+                <option value="Email">email</option>
+                <option value="Phone">phone</option>
+              </optgroup>
+              <optgroup label="location">
+                <option value="City">city</option>
+                <option value="Country">country</option>
+                <option value="Address">address</option>
+              </optgroup>
+              <optgroup label="internet">
+                <option value="IPv4">ipv4</option>
+                <option value="Url">url</option>
+              </optgroup>
+              <optgroup label="finance">
+                <option value="CreditCardNumber">credit_card</option>
+                <option value="Amount">amount</option>
+                <option value="Price">price</option>
+              </optgroup>
+              <optgroup label="business">
+                <option value="CompanyName">company</option>
+                <option value="ProductName">product</option>
+                <option value="Color">color</option>
+              </optgroup>
+              <optgroup label="custom">
+                <option value="Enum">enum (list)</option>
+                <option value="Json">json</option>
+              </optgroup>
+            </select>
+          </div>
+          
+          <div *ngIf="col.type === 'Integer' || col.type === 'Decimal'" class="row-2">
+            <div class="form-group">
+              <label>MIN</label>
+              <input type="number" [(ngModel)]="col.minValue">
+            </div>
+            <div class="form-group">
+              <label>MAX</label>
+              <input type="number" [(ngModel)]="col.maxValue">
+            </div>
+          </div>
+          
+          <div *ngIf="col.type === 'String'" class="form-group">
+            <label>MAX LENGTH</label>
+            <input type="number" [(ngModel)]="col.maxLength" placeholder="255">
+          </div>
+          
+          <div *ngIf="col.type === 'Enum'" class="form-group">
+            <label>VALUES (comma separated)</label>
+            <input type="text" [(ngModel)]="col.possibleValuesText" placeholder="option1,option2,option3">
+          </div>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" [(ngModel)]="col.isNullable">
+            <label>nullable</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acciones -->
+  <div class="actions">
+    <button class="btn-generate" (click)="generate()" [disabled]="isGenerating || columns.length === 0">
+      {{ isGenerating ? 'generating...' : 'generate & download' }}
+    </button>
+  </div>
+
+  <div *ngIf="message" [class]="messageType" class="message">
+    $ {{ message }}
+  </div>
+</div>
+</body>
+</html>
