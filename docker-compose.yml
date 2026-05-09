@@ -82,11 +82,29 @@ services:
       - redis_data:/data
     restart: unless-stopped
 
+  postgres:
+      image: postgres:16
+      container_name: smartgen-postgres
+      restart: always
+      environment:
+        POSTGRES_USER: admin
+        POSTGRES_PASSWORD: 123456
+      ports:
+        - "5432:5432"
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+
+
+
 volumes:
   postgres_main_data:
   mysql_data:
   postgres_test_data:
+  postgres_data:
   mongo_data:
   cassandra_data:
   neo4j_data:
   redis_data:
+
+
+  

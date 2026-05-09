@@ -35,7 +35,7 @@ export default function ConnectionsPage() {
   const [loading, setLoading] = useState(true)
 
   const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema as any),
     defaultValues: { engine: "mysql", host: "localhost", port: 3306 },
   })
 
