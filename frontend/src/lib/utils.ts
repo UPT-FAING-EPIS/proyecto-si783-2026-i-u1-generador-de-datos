@@ -8,6 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export const ENGINE_LABELS: Record<string, string> = {
   mysql: "MySQL",
   postgresql: "PostgreSQL",
+  sqlserver: "SQL Server",
   mongodb: "MongoDB",
   redis: "Redis",
   neo4j: "Neo4j",
@@ -18,6 +19,7 @@ export const ENGINE_LABELS: Record<string, string> = {
 export const ENGINE_COLORS: Record<string, string> = {
   mysql: "bg-orange-100 text-orange-800",
   postgresql: "bg-blue-100 text-blue-800",
+  sqlserver: "bg-red-100 text-red-800",
   mongodb: "bg-green-100 text-green-800",
   redis: "bg-red-100 text-red-800",
   neo4j: "bg-purple-100 text-purple-800",

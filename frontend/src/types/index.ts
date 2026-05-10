@@ -24,6 +24,7 @@ export interface Connection {
 export type DBEngine =
   | "mysql"
   | "postgresql"
+  | "sqlserver"
   | "mongodb"
   | "redis"
   | "neo4j"

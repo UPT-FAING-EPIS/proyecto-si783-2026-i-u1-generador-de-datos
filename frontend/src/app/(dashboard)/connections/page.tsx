@@ -11,7 +11,7 @@ import { z } from "zod"
 
 const schema = z.object({
   name: z.string().min(1, "Nombre requerido"),
-  engine: z.enum(["mysql","postgresql","mongodb","redis","neo4j","cassandra","elasticsearch"]),
+  engine: z.enum(["mysql","postgresql","sqlserver","mongodb","redis","neo4j","cassandra","elasticsearch"]),
   host: z.string().min(1, "Host requerido"),
   port: z.coerce.number().min(1).max(65535),
   username: z.string().optional(),
@@ -22,7 +22,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 const DEFAULT_PORTS: Record<string, number> = {
-  mysql: 3306, postgresql: 5432, mongodb: 27017,
+  mysql: 3306, postgresql: 5432, sqlserver: 1433, mongodb: 27017,
   redis: 6379, neo4j: 7687, cassandra: 9042, elasticsearch: 9200,
 }
 
