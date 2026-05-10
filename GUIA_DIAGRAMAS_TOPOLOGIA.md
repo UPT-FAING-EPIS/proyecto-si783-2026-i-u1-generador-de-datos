@@ -48,6 +48,49 @@ Si intentas acceder desde otro lugar, ¡NO FUNCIONA!
 
 ---
 
+## 📊 Diagrama 1B: SQL Server Local (Tu PC)
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                        Tu PC                             │
+│                    192.168.1.100                         │
+│                                                          │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │            localhost / 127.0.0.1                │   │
+│  │                                                 │   │
+│  │  ┌──────────────┐                               │   │
+│  │  │  SSMS        │  (SQL Server Management       │   │
+│  │  │  Studio      │   Studio - GUI)              │   │
+│  │  └──────────────┘                               │   │
+│  │                                                 │   │
+│  │  ┌──────────────┐                               │   │
+│  │  │  Backend     │                               │   │
+│  │  │  FastAPI    │                               │   │
+│  │  │ localhost:  │                               │   │
+│  │  │  8000       │                               │   │
+│  │  └──────┬───────┘                               │   │
+│  │         │                                       │   │
+│  │         │ conecta a localhost:1433              │   │
+│  │         │ (user: sa)                           │   │
+│  │         ↓                                       │   │
+│  │  ┌──────────────┐                               │   │
+│  │  │ SQL Server   │                               │   │
+│  │  │ Express      │                               │   │
+│  │  │ puerto 1433  │                               │   │
+│  │  │ (Process)    │                               │   │
+│  │  └──────────────┘                               │   │
+│  │                                                 │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                          │
+└──────────────────────────────────────────────────────────┘
+
+IMPORTANTE: SQL Server por defecto usa puerto 1433
+En Windows: Verifica "SQL Server Configuration Manager"
+En Linux:   systemctl status mssql-server
+```
+
+---
+
 ## 📊 Diagrama 2: Docker Local (Tu PC)
 
 ```

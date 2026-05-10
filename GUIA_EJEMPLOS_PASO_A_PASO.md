@@ -132,7 +132,68 @@ Parámetros extra: (dejar vacío)
 
 ---
 
-## 🐳 Ejemplo 3: PostgreSQL en Docker Local
+## �️ Ejemplo 2B: SQL Server Local en tu PC
+
+### Escenario
+- Instalaste SQL Server Express (gratis) o SQL Server Developer
+- Quieres que el backend también en tu PC se conecte
+- Tienes usuario `sa` (System Admin)
+
+### Paso 1: Obtener los datos
+
+```bash
+# En Windows PowerShell o sqlcmd (línea de comandos SQL Server):
+# Verifica que SQL Server esté escuchando en puerto 1433
+
+# Desde PowerShell:
+netstat -an | findstr :1433
+
+# Si ves LISTENING, está corriendo
+# En Linux con SQL Server:
+sudo systemctl status mssql-server
+
+# Conecta para verificar:
+sqlcmd -S localhost -U sa -P "TuContraseña"
+1> SELECT @@VERSION
+2> GO
+```
+
+### Paso 2: Crear una BD de prueba
+
+```sql
+-- En SQL Server Management Studio o sqlcmd:
+CREATE DATABASE testdb;
+USE testdb;
+CREATE TABLE users (id INT PRIMARY KEY, name VARCHAR(100));
+GO
+```
+
+### Paso 3: Llenar el formulario
+
+```
+Nombre:           SQL Server Local
+Motor:            SQL Server
+Host:             localhost
+Puerto:           1433
+Usuario:          sa
+Contraseña:       TuContraseña
+Base de Datos:    testdb
+Parámetros extra: (dejar vacío para local)
+```
+
+### Paso 4: Probar
+
+```
+[Probar Conexión]
+↓
+✓ Conexión exitosa
+  Versión: Microsoft SQL Server 2022
+  Latencia: 5.23 ms
+```
+
+---
+
+## �🐳 Ejemplo 3: PostgreSQL en Docker Local
 
 ### Escenario
 - Corriste `docker-compose up -d` en tu proyecto
@@ -366,6 +427,78 @@ Origen: 0.0.0.0/0 (o la IP de tu backend)
 ✓ Conexión exitosa
   Versión: PostgreSQL 15.3
   Latencia: 187.34 ms
+```
+
+---
+
+## ☁️ Ejemplo 5B: Azure SQL Database (SQL Server en la nube)
+
+### Escenario
+- Creaste una BD en Azure SQL Database
+- Backend está desplegado en Azure App Service (o cualquier servidor)
+- Quieres conectar a tu BD SQL Server en la nube
+
+### Paso 1: Obtener el servidor de Azure
+
+```
+Azure Portal → SQL Databases → Tu BD
+↓
+Connection Strings
+↓
+Servidor: myserver.database.windows.net
+Puerto: 1433 (por defecto)
+```
+
+### Paso 2: Obtener credenciales
+
+```
+Durante la creación guardaste:
+- Usuario: azureadmin
+- Contraseña: MyPassword@2024
+- Base de datos: myappdb
+```
+
+### Paso 3: Llenar el formulario
+
+```
+Nombre:           Azure SQL Production
+Motor:            SQL Server
+Host:             myserver.database.windows.net
+Puerto:           1433
+Usuario:          azureadmin
+Contraseña:       MyPassword@2024
+Base de Datos:    myappdb
+Parámetros extra: {
+  "Encrypt": "yes",
+  "TrustServerCertificate": "no"
+}
+```
+
+### Paso 4: Probar
+
+```
+[Probar Conexión]
+↓
+✗ Conexión denegada / Login failed?
+
+↓ Verifica Firewall de Azure:
+Azure Portal → SQL servers → Tu servidor
+→ Firewalls and virtual networks
+→ ¿Permite tu IP?
+
+Si no, agrega:
+Nombre: MyBackendIP
+Inicio: Tu IP del backend
+Fin: Tu IP del backend
+
+O si está en Azure App Service:
+→ "Allow Azure services and resources to access this server" = ON
+
+↓ Intenta de nuevo:
+
+✓ Conexión exitosa
+  Versión: Microsoft SQL Server 2022
+  Latencia: 156.78 ms
 ```
 
 ---

@@ -9,7 +9,7 @@
 │  │
 │  ├─ ¿Dónde está la BD?
 │  │  ├─ En mi PC (XAMPP/instalación local)
-│  │  │  └─ ✅ USA: Host = localhost, Puerto = 5432/3306/27017
+  │  │  └─ ✅ USA: Host = localhost, Puerto = 5432/3306/27017/1433
 │  │  │
 │  │  ├─ En Docker en mi PC
 │  │  │  ├─ ¿Accedo DESDE fuera del contenedor?
@@ -60,11 +60,13 @@
 |-----------|------|--------|---------|------------|-----|-------|
 | **PostgreSQL local (PC)** | `localhost` | `5432` | `postgres` | `testdb` | No | Si XAMPP, puede ser 5433 |
 | **MySQL local (PC)** | `localhost` | `3306` | `root` | `testdb` | No | XAMPP usa 3306 por defecto |
+| **SQL Server local (PC)** | `localhost` | `1433` | `sa` | `testdb` | No | Express es gratis |
 | **MongoDB local (PC)** | `localhost` | `27017` | - | `testdb` | No | Sin usuario si MongoDB local sin auth |
 | **PostgreSQL Docker (desde PC)** | `localhost` | `5433` | `admin` | `smartgen_db` | No | Puerto PUBLICADO |
 | **PostgreSQL Docker (desde Backend en Docker)** | `postgres_main` | `5432` | `admin` | `smartgen_db` | No | Puerto INTERNO |
 | **Supabase PostgreSQL** | `db.xyz.supabase.co` | `5432` | `postgres` | `postgres` | **Sí** | SSL obligatorio |
 | **AWS RDS PostgreSQL** | `mydb.xxx.rds.amazonaws.com` | `5432` | `admin` | `mydb` | **Sí** | Firewall: agrega IP del backend |
+| **Azure SQL Database** | `server.database.windows.net` | `1433` | `admin` | `mydb` | **Sí** | Requiere parámetros SSL |
 | **MongoDB Atlas** | `cluster0.mongodb.net` | `27017` | `admin_user` | `mydb` | **Sí** | Usa URI en parámetros extra |
 | **Servidor remoto custom** | `52.14.20.50` | `5432` | `admin` | `testdb` | Depende | Verifica firewall + seguridad |
 
@@ -270,8 +272,10 @@ Antes de desplegar a producción, verifica:
 ### Documentación Oficial
 - PostgreSQL: https://www.postgresql.org/docs/
 - MySQL: https://dev.mysql.com/doc/
+- SQL Server: https://learn.microsoft.com/en-us/sql/
 - MongoDB: https://docs.mongodb.com/
 - Supabase: https://supabase.com/docs/guides/database/connecting-to-postgres
+- Azure SQL: https://learn.microsoft.com/en-us/azure/azure-sql/
 
 ### En este Proyecto
 - Conectores: `backend/connectors/`

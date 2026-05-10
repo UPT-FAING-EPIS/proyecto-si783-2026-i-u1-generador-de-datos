@@ -48,6 +48,16 @@ BD: testdb
 SSL: No
 ```
 
+### 2B. SQL Server Local (Windows/Linux)
+```
+Host: localhost
+Puerto: 1433
+Usuario: sa
+Contraseña: tu_password_sa
+BD: testdb
+SSL: No
+```
+
 ### 3. PostgreSQL en Docker Local
 ```
 Host: postgres_main (desde dentro)
@@ -69,6 +79,16 @@ Usuario: postgres / admin
 Contraseña: (del dashboard)
 BD: postgres / mydb
 SSL: {"sslmode": "require"}
+```
+
+### 4B. Azure SQL Server
+```
+Host: server.database.windows.net
+Puerto: 1433
+Usuario: azureadmin
+Contraseña: (del portal)
+BD: mydb
+SSL: {"Encrypt": "yes", "TrustServerCertificate": "no"}
 ```
 
 ### 5. MongoDB Atlas
@@ -108,6 +128,9 @@ psql -h host -p puerto -U usuario -d base_datos
 # MySQL
 mysql -h host -p puerto -u usuario -p base_datos
 
+# SQL Server (desde Windows)
+sqlcmd -S host,puerto -U usuario -P contraseña
+
 # MongoDB
 mongosh "mongodb://host:puerto"
 
@@ -136,11 +159,11 @@ docker exec smartgen_backend psql -h postgres_main -U admin
 |------------------|-------------|-----------|
 | PC local | PC local | ✅ |
 | PC local | Docker PC | ✅ |
-| PC local | Supabase/AWS | ✅ |
+| PC local | Supabase/AWS/Azure | ✅ |
 | Docker PC | Otro contenedor | ✅ |
-| Docker PC | Supabase/AWS | ✅ |
+| Docker PC | Supabase/AWS/Azure | ✅ |
 | Servidor remoto | Docker servidor | ✅ |
-| Servidor remoto | Supabase/AWS | ✅ |
+| Servidor remoto | Supabase/AWS/Azure | ✅ |
 | Servidor remoto | BD PC local | ❌ |
 | Servidor A | BD Servidor B | ❌* |
 

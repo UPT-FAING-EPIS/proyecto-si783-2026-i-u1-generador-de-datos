@@ -53,6 +53,26 @@ Visualizaciones de:
 
 ---
 
+### 4️⃣ **Guía Especial: VPS + SQL Server Local (15-20 min)** ⭐
+📄 [GUIA_VPS_SQL_SERVER_LOCAL.md](GUIA_VPS_SQL_SERVER_LOCAL.md)
+
+**Tu escenario exacto:**
+- Tienes VPS desplegado (página web)
+- Quieres conectar a SQL Server en tu PC local
+- ¿Por qué NO funciona? ¿Qué soluciones hay?
+
+Contiene:
+- Problema (IP privada no alcanzable)
+- 4 soluciones viables (Port Forwarding, VPN, Nube, SSH Tunnel)
+- Tabla comparativa de soluciones
+- Configuraciones exactas por escenario
+- Cómo instalar SQL Server Express en Windows/Linux
+- Troubleshooting específico para SQL Server
+
+**¡LEE ESTO PRIMERO SI TIENES UNA VPS!**
+
+---
+
 ## 🎯 Según Tu Situación
 
 ### 📍 **Estoy desarrollando en mi PC**
@@ -90,6 +110,30 @@ Visualizaciones de:
 
 ---
 
+### 🖥️ **Mi escenario especial: VPS + SQL Server en mi PC local**
+
+**Este es tu caso exacto:**
+- Backend está en una VPS (ej: DigitalOcean, AWS, Heroku)
+- Quieres conectar a SQL Server en tu PC local (IP privada 192.168.1.x)
+- Necesitas conocer las 4 soluciones viables
+
+1. Lee PRIMERO: [GUIA_VPS_SQL_SERVER_LOCAL.md](GUIA_VPS_SQL_SERVER_LOCAL.md)
+   - Entiende por qué NO funciona la IP privada
+   - Compara las 4 soluciones
+   - Elige la mejor para ti
+
+2. Según tu solución elegida:
+   - **Port Forwarding**: Sigue pasos en la guía
+   - **VPN (recomendado)**: Instala Wireguard, usa IP VPN
+   - **Nube**: Mueve SQL Server a Azure/AWS
+   - **SSH Tunnel**: Configura túnel SSH
+
+3. Llena el formulario con la configuración correcta
+
+4. Si falla: Consulta troubleshooting en la guía
+
+---
+
 ### ⚠️ **Algo no funciona, necesito solucionar problemas**
 
 1. Ve directo a: [GUIA_REFERENCIA_RAPIDA.md](GUIA_REFERENCIA_RAPIDA.md) → Errores Comunes
@@ -99,7 +143,7 @@ Visualizaciones de:
 
 ---
 
-## 📖 Descripciones de Documentos
+### 📖 Descripciones de Documentos
 
 ### RESUMEN_EJECUTIVO.md
 **Propósito:** Respuestas directas y rápidas

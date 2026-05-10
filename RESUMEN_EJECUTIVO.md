@@ -128,6 +128,17 @@ Parámetros extra: (vacío)
 ```
 
 ```yaml
+# SQL Server local
+Motor: SQL Server
+Host: localhost
+Puerto: 1433
+Usuario: sa
+Contraseña: tu_password
+Base de datos: testdb
+Parámetros extra: (vacío)
+```
+
+```yaml
 # MongoDB local
 Motor: MongoDB
 Host: localhost
@@ -272,12 +283,16 @@ Parámetros extra: {"ssl": true}
 |------|---------|------|--------|---------|------------|-----------|-----|
 | **Local PostgreSQL** | PC local | `localhost` | `5432` | `postgres` | `tu_pwd` | `testdb` | No |
 | **Local MySQL** | PC local | `localhost` | `3306` | `root` | `(vacío)` | `testdb` | No |
+| **Local SQL Server** | PC local | `localhost` | `1433` | `sa` | `tu_pwd` | `testdb` | No |
 | **Docker PostgreSQL** | PC local | `localhost` | `5433` | `admin` | `admin123` | `smartgen_db` | No |
 | **Docker Backend** | Dentro Docker | `postgres_main` | `5432` | `admin` | `admin123` | `smartgen_db` | No |
 | **Supabase** | Nube | `db.xyz.supabase.co` | `5432` | `postgres` | `pwd` | `postgres` | **Sí** |
-| **AWS RDS** | Nube | `mydb.rds.amazonaws.com` | `5432` | `admin` | `pwd` | `mydb` | **Sí** |
+| **AWS RDS PostgreSQL** | Nube | `mydb.rds.amazonaws.com` | `5432` | `admin` | `pwd` | `mydb` | **Sí** |
+| **AWS RDS SQL Server** | Nube | `mydb.rds.amazonaws.com` | `1433` | `admin` | `pwd` | `mydb` | **Sí** |
+| **Azure SQL Database** | Nube | `myserver.database.windows.net` | `1433` | `adminuser` | `pwd` | `mydb` | **Sí** |
 | **MongoDB Atlas** | Nube | `cluster0.mongodb.net` | `27017` | `admin_user` | `pwd` | `mydb` | **Sí** |
-| **PC del dev** | Remoto | `192.168.1.100` | `5432` | - | - | - | ❌ **NO FUNCIONA** |
+| **PC del dev (sin VPN)** | Remoto | `192.168.1.100` | `1433` | - | - | - | ❌ **NO FUNCIONA** |
+| **PC del dev (con VPN)** | Remoto | `10.0.0.2` | `1433` | `sa` | `pwd` | `testdb` | No |
 
 ---
 
@@ -299,9 +314,10 @@ Antes de hacer clic en "Probar Conexión", verifica:
 
 **Para BD en Nube:**
 - [ ] Copiaste exactamente el Host (sin espacios)
-- [ ] Puerto es 5432 (PostgreSQL) o 27017 (MongoDB)
+- [ ] Puerto es correcto (5432 PostgreSQL, 1433 SQL Server, 27017 MongoDB)
 - [ ] Usuario y contraseña coinciden con panel administrativo
-- [ ] Agregaste `{"sslmode": "require"}` si es Supabase/AWS RDS
+- [ ] Agregaste `{"sslmode": "require"}` si es Supabase/AWS RDS PostgreSQL
+- [ ] Para SQL Server en Azure: `{"Encrypt": "yes", "TrustServerCertificate": "no"}`
 - [ ] IP del backend está en whitelist de firewall (si aplica)
 
 ---

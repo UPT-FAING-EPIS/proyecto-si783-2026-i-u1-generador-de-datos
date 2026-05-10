@@ -5,6 +5,7 @@ from connectors.postgresql_connector import PostgreSQLConnector
 from connectors.mongodb_connector import MongoDBConnector
 from connectors.redis_connector import RedisConnector
 from connectors.neo4j_connector import Neo4jConnector
+from connectors.sqlserver_connector import SQLServerConnector
 from fastapi import HTTPException
 
 def get_connector(config: ConnectionCreate, password: str = None) -> BaseConnector:
@@ -14,6 +15,7 @@ def get_connector(config: ConnectionCreate, password: str = None) -> BaseConnect
         DBEngine.mongodb: MongoDBConnector,
         DBEngine.redis: RedisConnector,
         DBEngine.neo4j: Neo4jConnector,
+        DBEngine.sqlserver: SQLServerConnector,
     }
     cls = connectors.get(config.engine)
     if not cls:
