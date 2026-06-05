@@ -7,13 +7,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse
 from typing import Dict, Any
 
-from backend.auth.dependencies import get_current_user
 from backend.models.schemas import (
     GeneratePreviewRequest,
     GeneratedDataResponse,
     ExportRequest,
-    ExportResponse,
-    UsuarioResponse
+    ExportResponse
 )
 from backend.generators.data_generator import DataGenerator
 from backend.generators.exporters import export_sql, export_csv, export_json, TEMP_DIR
@@ -21,7 +19,7 @@ from backend.generators.exporters import export_sql, export_csv, export_json, TE
 router = APIRouter(prefix="/generate", tags=["Generator"])
 
 @router.post("/preview", response_model=Dict[str, GeneratedDataResponse])
-def generate_preview(req: GeneratePreviewRequest, current_user: UsuarioResponse = Depends(get_current_user)):
+def generate_preview(req: GeneratePreviewRequest):
     """
     Genera un pequeño conjunto de datos para vista previa.
     """
@@ -52,7 +50,7 @@ def generate_preview(req: GeneratePreviewRequest, current_user: UsuarioResponse 
         raise HTTPException(status_code=500, detail=f"Error generando preview: {str(e)}")
 
 @router.post("/export", response_model=ExportResponse)
-def export_data(req: ExportRequest, current_user: UsuarioResponse = Depends(get_current_user)):
+def export_data(req: ExportRequest):
     """
     Genera los datos completos y los exporta al formato solicitado.
     """

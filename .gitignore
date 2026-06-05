@@ -14,3 +14,14 @@ node_modules/
 
 # TypeScript
 *.tsbuildinfo
+
+# PyInstaller
+build/
+dist/
+*.spec
+
+# SQLite local DB
+*.db
+
+# Temporary exports directory
+tmp_exports/

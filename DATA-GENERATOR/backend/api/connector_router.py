@@ -7,7 +7,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import Dict, Any, List
 
-from backend.auth.dependencies import get_current_user
 from backend.core.database import get_db
 from backend.core.encryption import encrypt_password, decrypt_password
 from backend.models.models import Conexion
@@ -17,7 +16,6 @@ from backend.models.schemas import (
     DatabaseSchema,
     InsertRequest,
     InsertResponse,
-    UsuarioResponse,
 )
 from backend.connectors.connector_factory import get_connector
 from backend.analyzers.schema_analyzer import analyze_schema
@@ -31,8 +29,7 @@ router = APIRouter(prefix="/connect", tags=["Connector"])
 # ─────────────────────────────────────────────────────────────
 @router.post("/test", response_model=Dict[str, Any])
 def test_connection(
-    req: ConexionRequest,
-    current_user: UsuarioResponse = Depends(get_current_user)
+    req: ConexionRequest
 ):
     """Prueba la conexión a una base de datos externa."""
     try:
@@ -51,8 +48,7 @@ def test_connection(
 @router.post("/schema", response_model=DatabaseSchema)
 def get_external_schema(
     req: ConexionRequest,
-    db: Session = Depends(get_db),
-    current_user: UsuarioResponse = Depends(get_current_user)
+    db: Session = Depends(get_db)
 ):
     """
     Se conecta a la BD, extrae y analiza el esquema completo.
@@ -64,7 +60,6 @@ def get_external_schema(
 
         # Guardar la conexión exitosa (evitar duplicados por host+puerto+bd+usuario)
         existing = db.query(Conexion).filter(
-            Conexion.usuario_id == current_user.id,
             Conexion.host == req.host,
             Conexion.puerto == req.puerto,
             Conexion.nombre_bd == req.nombre_bd,
@@ -79,7 +74,6 @@ def get_external_schema(
             existing.motor_bd = req.motor or "postgresql"
         else:
             nueva = Conexion(
-                usuario_id=current_user.id,
                 nombre_alias=f"{req.nombre_bd}@{req.host}",
                 motor_bd=req.motor or "postgresql",
                 host=req.host,
@@ -104,13 +98,11 @@ def get_external_schema(
 # ─────────────────────────────────────────────────────────────
 @router.get("/saved", response_model=List[ConexionGuardadaResponse])
 def list_saved_connections(
-    db: Session = Depends(get_db),
-    current_user: UsuarioResponse = Depends(get_current_user)
+    db: Session = Depends(get_db)
 ):
-    """Devuelve todas las conexiones guardadas del usuario autenticado."""
+    """Devuelve todas las conexiones guardadas."""
     conexiones = (
         db.query(Conexion)
-        .filter(Conexion.usuario_id == current_user.id)
         .order_by(Conexion.created_at.desc())
         .all()
     )
@@ -145,13 +137,11 @@ def list_saved_connections(
 @router.delete("/saved/{conexion_id}")
 def delete_saved_connection(
     conexion_id: int,
-    db: Session = Depends(get_db),
-    current_user: UsuarioResponse = Depends(get_current_user)
+    db: Session = Depends(get_db)
 ):
-    """Elimina una conexión guardada del usuario."""
+    """Elimina una conexión guardada."""
     conexion = db.query(Conexion).filter(
-        Conexion.id == conexion_id,
-        Conexion.usuario_id == current_user.id
+        Conexion.id == conexion_id
     ).first()
 
     if not conexion:
@@ -168,8 +158,7 @@ def delete_saved_connection(
 @router.post("/insert", response_model=InsertResponse)
 def insert_generated_data(
     req: InsertRequest,
-    db: Session = Depends(get_db),
-    current_user: UsuarioResponse = Depends(get_current_user)
+    db: Session = Depends(get_db)
 ):
     """Genera los datos sintéticos y los inserta directamente en la base de datos externa."""
     try:
@@ -227,7 +216,6 @@ def insert_generated_data(
 
         # Actualizar estadísticas en la conexión guardada
         conexion = db.query(Conexion).filter(
-            Conexion.usuario_id == current_user.id,
             Conexion.host == req.connection.host,
             Conexion.puerto == req.connection.puerto,
             Conexion.nombre_bd == req.connection.nombre_bd,

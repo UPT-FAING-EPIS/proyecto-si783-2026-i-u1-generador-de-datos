@@ -1,18 +1,16 @@
 """
 core/database.py
-Engine SQLAlchemy y sesiones para la base de datos interna MySQL.
+Engine SQLAlchemy y sesiones para la base de datos interna SQLite.
 """
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 from backend.core.config import settings
 
-# Motor de conexión
+# Motor de conexión SQLite
 engine = create_engine(
     settings.DATABASE_URL,
-    pool_pre_ping=True,       # Verifica conexión antes de usarla
-    pool_recycle=3600,        # Recicla conexiones cada hora
-    echo=False,               # True para debug de SQL
+    connect_args={"check_same_thread": False},  # Necesario para SQLite
+    echo=False,
 )
 
 # Fábrica de sesiones

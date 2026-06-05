@@ -9,8 +9,8 @@ from backend.core.config import settings
 
 
 def _get_fernet() -> Fernet:
-    """Deriva una clave Fernet de 32 bytes desde el JWT_SECRET_KEY."""
-    key_bytes = settings.JWT_SECRET_KEY.encode("utf-8")
+    """Deriva una clave Fernet de 32 bytes desde el ENCRYPTION_KEY."""
+    key_bytes = settings.ENCRYPTION_KEY.encode("utf-8")
     # SHA-256 siempre produce 32 bytes, perfecto para Fernet (necesita 32 bytes en base64-url)
     digest = hashlib.sha256(key_bytes).digest()
     fernet_key = base64.urlsafe_b64encode(digest)

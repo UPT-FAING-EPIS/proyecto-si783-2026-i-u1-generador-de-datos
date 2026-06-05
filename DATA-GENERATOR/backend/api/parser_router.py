@@ -5,18 +5,16 @@ Rutas para procesar scripts SQL enviados por el usuario.
 from fastapi import APIRouter, Depends, HTTPException
 from typing import Dict, Any
 
-from backend.auth.dependencies import get_current_user
 from backend.models.schemas import (
     ParseSQLRequest,
-    ParseSQLResponse,
-    UsuarioResponse
+    ParseSQLResponse
 )
 from backend.parsers.sql_parser import parse_sql_script
 
 router = APIRouter(prefix="/parser", tags=["Parser"])
 
 @router.post("/analyze", response_model=ParseSQLResponse)
-def analyze_sql_script(req: ParseSQLRequest, current_user: UsuarioResponse = Depends(get_current_user)):
+def analyze_sql_script(req: ParseSQLRequest):
     """
     Recibe un script SQL (CREATE TABLEs) y lo parsea para extraer el esquema.
     """

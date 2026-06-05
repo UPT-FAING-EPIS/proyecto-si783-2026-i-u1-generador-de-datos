@@ -4,42 +4,19 @@ Configuración centralizada usando Pydantic Settings.
 Lee variables de entorno desde .env automáticamente.
 """
 from pydantic_settings import BaseSettings
-from pydantic import field_validator
 from typing import List
 import os
 
 
 class Settings(BaseSettings):
-    # ── Base de datos interna ──────────────────────────────────
-    MYSQL_HOST: str = "localhost"
-    MYSQL_PORT: int = 3306
-    MYSQL_USER: str = "root"
-    MYSQL_PASSWORD: str = ""
-    MYSQL_DB: str = "datagenerator_db"
+    # ── Base de datos interna (SQLite) ─────────────────────────
+    DATABASE_PATH: str = "./cdcart_data.db"
 
-    # ── JWT ────────────────────────────────────────────────────
-    JWT_SECRET_KEY: str = "secret_key_change_me"
-    JWT_ALGORITHM: str = "HS256"
-    JWT_EXPIRE_MINUTES: int = 1440  # 24 horas
-
-    # ── OAuth ──────────────────────────────────────────────────
-    GOOGLE_CLIENT_ID: str = ""
-    GOOGLE_CLIENT_SECRET: str = ""
-    GITHUB_CLIENT_ID: str = ""
-    GITHUB_CLIENT_SECRET: str = ""
-    MICROSOFT_CLIENT_ID: str = ""
-    MICROSOFT_CLIENT_SECRET: str = ""
-    MICROSOFT_TENANT_ID: str = "common"
-
-    # ── Superadmin inicial ─────────────────────────────────────
-    SUPERADMIN_EMAIL: str = "admin@sistema.com"
-    SUPERADMIN_PASSWORD: str = "Admin123!"
-    SUPERADMIN_NOMBRE: str = "Super"
-    SUPERADMIN_APELLIDO: str = "Admin"
+    # ── Clave de encriptación para contraseñas de conexiones ───
+    ENCRYPTION_KEY: str = "cdcart_local_secret_key_change_me"
 
     # ── Frontend / CORS ────────────────────────────────────────
-    FRONTEND_URL: str = "http://localhost:3000"
-    ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:8000"
+    ALLOWED_ORIGINS: str = "http://localhost:1420,http://localhost:3000,tauri://localhost"
 
     # ── Faker ──────────────────────────────────────────────────
     FAKER_LOCALE: str = "es_ES"
@@ -49,10 +26,7 @@ class Settings(BaseSettings):
 
     @property
     def DATABASE_URL(self) -> str:
-        return (
-            f"mysql+pymysql://{self.MYSQL_USER}:{self.MYSQL_PASSWORD}"
-            f"@{self.MYSQL_HOST}:{self.MYSQL_PORT}/{self.MYSQL_DB}"
-        )
+        return f"sqlite:///{self.DATABASE_PATH}"
 
     @property
     def CORS_ORIGINS(self) -> List[str]:

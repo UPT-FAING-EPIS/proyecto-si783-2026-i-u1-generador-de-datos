@@ -10,12 +10,9 @@ from contextlib import asynccontextmanager
 from backend.core.config import settings
 from backend.core.database import engine, Base
 from backend.api import (
-    auth_router,
-    admin_router,
     connector_router,
     parser_router,
-    generator_router,
-    comments_router
+    generator_router
 )
 
 @asynccontextmanager
@@ -46,15 +43,17 @@ app.add_middleware(
 
 # Crear sub-router para prefijo /api/v1
 api_router = APIRouter(prefix="/api/v1")
-api_router.include_router(auth_router.router)
-api_router.include_router(admin_router.router)
 api_router.include_router(connector_router.router)
 api_router.include_router(parser_router.router)
 api_router.include_router(generator_router.router)
-api_router.include_router(comments_router.router)
 
 app.include_router(api_router)
 
 @app.get("/")
 def read_root():
     return {"message": "Bienvenido a la API del Generador Inteligente de Datos"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)
